@@ -17,6 +17,7 @@ The repo is intentionally hands-on. Each lab includes vulnerable code, a safer L
 | Lab | Topic | Routes | Notes |
 | --- | --- | --- | --- |
 | 01 | IDOR Protection | `/labs/idor`, `/labs/idor/vulnerable/invoices/{invoice}`, `/labs/idor/secure/invoices/{invoice}` | Demonstrates why direct object lookup with `Invoice::findOrFail($id)` is risky and how to scope invoice access to the authenticated customer. |
+| 02 | Mass Assignment | `/labs/mass-assignment`, `/labs/mass-assignment/vulnerable`, `/labs/mass-assignment/secure` | Demonstrates why trusting `$request->all()` is risky and how to store only validated profile fields. |
 
 ## Lab 01: IDOR Protection
 
@@ -41,6 +42,14 @@ Use `/login` to sign in as a lab customer, then open `/labs/idor` to compare vul
 The vulnerable invoice route loads invoices directly by ID. The secure invoice route requires the customer guard and searches through the authenticated customer's `invoices()` relationship.
 
 The lab notes are in [labs/01-idor.md](labs/01-idor.md).
+
+## Lab 02: Mass Assignment
+
+Lab 02 shows how trusting request input can allow protected profile attributes to be changed.
+
+The vulnerable endpoint uses `Profile::create($request->all())`, so submitted `role` and `is_verified` values are stored. The secure endpoint validates and stores only `name` and `email`, leaving protected fields at their defaults.
+
+The lab page is available at `/labs/mass-assignment`, and the lab notes are in [labs/02-mass-assignment.md](labs/02-mass-assignment.md).
 
 ## Install Locally
 
@@ -118,6 +127,12 @@ Run only the IDOR feature tests:
 
 ```bash
 php artisan test --filter=IdorProtectionTest
+```
+
+Run only the Mass Assignment feature tests:
+
+```bash
+php artisan test --filter=MassAssignmentTest
 ```
 
 ## Security Disclaimer

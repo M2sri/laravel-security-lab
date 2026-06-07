@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Invoice;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,39 @@ Route::get('/labs/idor', function () {
         'authenticatedCustomer' => Auth::guard('customer')->user(),
         'labInvoices' => $labInvoices,
     ]);
+});
+
+Route::get('/labs/mass-assignment', function () {
+    return view('labs.mass-assignment');
+});
+
+Route::post('/labs/mass-assignment/vulnerable', function (Request $request) {
+    $profile = Profile::create($request->all());
+    $profile->refresh();
+
+    return response()->json([
+        'name' => $profile->name,
+        'email' => $profile->email,
+        'role' => $profile->role,
+        'is_verified' => $profile->is_verified,
+    ], 201);
+});
+
+Route::post('/labs/mass-assignment/secure', function (Request $request) {
+    $validatedProfileFields = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'email', 'max:255'],
+    ]);
+
+    $profile = Profile::create($validatedProfileFields);
+    $profile->refresh();
+
+    return response()->json([
+        'name' => $profile->name,
+        'email' => $profile->email,
+        'role' => $profile->role,
+        'is_verified' => $profile->is_verified,
+    ], 201);
 });
 
 Route::middleware('auth:customer')->group(function () {
