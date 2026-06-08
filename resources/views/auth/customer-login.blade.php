@@ -1,84 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IDOR Lab Login</title>
-    <style>
-        body {
-            margin: 0;
-            background: #f7f7f4;
-            color: #202124;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        }
+@extends('layouts.app')
 
-        main {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 56px 20px;
-        }
+@section('title', 'IDOR Lab Login')
+@section('nav_label', 'Login navigation')
 
-        h1 {
-            margin: 0 0 10px;
-            font-size: 30px;
-        }
+@section('navigation')
+    <a href="/">Home</a>
+    <a href="/labs/idor">IDOR Lab</a>
+    <a href="/labs/mass-assignment">Mass Assignment Lab</a>
+@endsection
 
-        p {
-            line-height: 1.6;
-        }
-
-        form {
-            display: grid;
-            gap: 16px;
-            margin-top: 24px;
-            padding: 24px;
-            background: #ffffff;
-            border: 1px solid #d8d8d3;
-        }
-
-        label {
-            display: grid;
-            gap: 6px;
-            font-weight: 600;
-        }
-
-        input {
-            padding: 10px 12px;
-            border: 1px solid #c9c9c3;
-            font: inherit;
-        }
-
-        button {
-            padding: 10px 14px;
-            border: 0;
-            background: #0f5f70;
-            color: #ffffff;
-            cursor: pointer;
-            font: inherit;
-            font-weight: 700;
-        }
-
-        a {
-            color: #0f5f70;
-            font-weight: 600;
-        }
-
-        .error {
-            color: #9f1d20;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-    <main>
+@section('content')
+    <main class="lab-page narrow-page">
         <h1>IDOR Lab Login</h1>
-        <p>This customer login is only for the local IDOR lab demo.</p>
+        <p class="lab-lede">Use a lab customer account to compare vulnerable and secure invoice access.</p>
 
         @if ($errors->any())
             <p class="error">{{ $errors->first() }}</p>
         @endif
 
-        <form method="POST" action="/login">
+        <form class="form-panel" method="POST" action="/login">
             @csrf
 
             <label>
@@ -94,7 +34,6 @@
             <button type="submit">Log in</button>
         </form>
 
-        <p><a href="/labs/idor">Back to the lab page</a></p>
+        <p class="spaced-link"><a href="/labs/idor">Back to the lab page</a></p>
     </main>
-</body>
-</html>
+@endsection
