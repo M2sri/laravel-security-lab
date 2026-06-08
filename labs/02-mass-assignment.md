@@ -6,6 +6,10 @@ Mass assignment is the practice of passing an array of input directly into a mod
 
 That can be convenient for normal form fields, but it becomes dangerous when the request contains attributes the user should not control. In this lab, `role` and `is_verified` are sensitive profile fields.
 
+## Login Requirement
+
+No login required for this lab demo.
+
 ## Vulnerable Code
 
 The vulnerable endpoint trusts every submitted field:

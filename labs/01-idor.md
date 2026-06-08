@@ -4,6 +4,17 @@
 
 Insecure Direct Object Reference, or IDOR, happens when an application exposes a direct identifier for a record and does not verify that the current user is allowed to access that record.
 
+## Login Required
+
+Use `/login` with either seeded lab customer:
+
+| Customer | Email | Password | Represents |
+| --- | --- | --- | --- |
+| Customer One | `customer1@example.com` | `password` | Customer who owns invoice `IDOR-LAB-001` |
+| Customer Two | `customer2@example.com` | `password` | Customer who owns invoice `IDOR-LAB-002` |
+
+Login is needed because the vulnerable and secure invoice routes both require the `customer` guard before they demonstrate the difference between direct lookup and owner-scoped lookup.
+
 For example, a customer might load:
 
 ```text

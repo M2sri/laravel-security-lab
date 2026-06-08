@@ -18,6 +18,8 @@ The repo is intentionally hands-on. Each lab includes vulnerable code, a safer L
 | --- | --- | --- | --- |
 | 01 | IDOR Protection | `/labs/idor`, `/labs/idor/vulnerable/invoices/{invoice}`, `/labs/idor/secure/invoices/{invoice}` | Demonstrates why direct object lookup with `Invoice::findOrFail($id)` is risky and how to scope invoice access to the authenticated customer. |
 | 02 | Mass Assignment | `/labs/mass-assignment`, `/labs/mass-assignment/vulnerable`, `/labs/mass-assignment/secure` | Demonstrates why trusting `$request->all()` is risky and how to store only validated profile fields. |
+| 03 | File Upload Security | `/labs/file-upload-security`, `/labs/file-upload-security/secure`, `/labs/file-upload-security/download` | Demonstrates PDF validation, generated filenames, private storage, and authenticated downloads. |
+| 04 | Broken Access Control | `/labs/broken-access-control`, `/labs/broken-access-control/vulnerable/admin-report`, `/labs/broken-access-control/secure/admin-report` | Demonstrates why login is not enough for admin-only routes and how to add a Gate authorization check. |
 
 ## Lab 01: IDOR Protection
 
@@ -50,6 +52,29 @@ Lab 02 shows how trusting request input can allow protected profile attributes t
 The vulnerable endpoint uses `Profile::create($request->all())`, so submitted `role` and `is_verified` values are stored. The secure endpoint validates and stores only `name` and `email`, leaving protected fields at their defaults.
 
 The lab page is available at `/labs/mass-assignment`, and the lab notes are in [labs/02-mass-assignment.md](labs/02-mass-assignment.md).
+
+## Lab 03: File Upload Security
+
+Lab 03 shows how unsafe upload handling can expose files.
+
+The secure upload endpoint validates that the uploaded document is a PDF, limits the size to 2 MB, stores the file on the `private` disk, and uses Laravel-generated filenames. The controlled download route requires a logged-in lab customer.
+
+The lab page is available at `/labs/file-upload-security`, and the lab notes are in [labs/03-file-upload-security.md](labs/03-file-upload-security.md).
+
+## Lab 04: Broken Access Control
+
+Lab 04 shows how an admin-only report can be exposed when a route checks authentication but not authorization.
+
+Seeded application user accounts:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@example.com` | `password` |
+| User | `user@example.com` | `password` |
+
+The vulnerable admin report route allows any authenticated application user. The secure route uses the `view-admin-report` Gate and only allows users whose `role` is `admin`.
+
+The lab page is available at `/labs/broken-access-control`, and the lab notes are in [labs/04-broken-access-control.md](labs/04-broken-access-control.md).
 
 ## Install Locally
 
@@ -100,7 +125,7 @@ To refresh the local database from scratch:
 php artisan migrate:fresh --seed
 ```
 
-`DatabaseSeeder` registers `IdorLabSeeder`, which creates the two lab customers and two lab invoices.
+`DatabaseSeeder` creates the Lab 04 admin and normal user accounts, then registers `IdorLabSeeder`, which creates the two lab customers and two lab invoices.
 
 ## Run the App
 
@@ -112,8 +137,9 @@ php artisan serve
 
 Then visit:
 
-- `/login` for the customer login form
+- `/login` for the lab login form
 - `/labs/idor` for the IDOR lab home page
+- `/labs/broken-access-control` for the broken access control lab
 
 ## Run Tests
 
@@ -133,6 +159,12 @@ Run only the Mass Assignment feature tests:
 
 ```bash
 php artisan test --filter=MassAssignmentTest
+```
+
+Run only the Broken Access Control feature tests:
+
+```bash
+php artisan test --filter=BrokenAccessControlTest
 ```
 
 ## Security Disclaimer

@@ -1,18 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'IDOR Lab Login')
+@section('title', 'Lab Login')
 @section('nav_label', 'Login navigation')
 
 @section('navigation')
     <a href="/">Home</a>
     <a href="/labs/idor">IDOR Lab</a>
     <a href="/labs/mass-assignment">Mass Assignment Lab</a>
+    <a href="/labs/file-upload-security">File Upload Lab</a>
+    <a href="/labs/broken-access-control">Access Control Lab</a>
 @endsection
 
 @section('content')
     <main class="lab-page narrow-page">
-        <h1>IDOR Lab Login</h1>
-        <p class="lab-lede">Use a lab customer account to compare vulnerable and secure invoice access.</p>
+        <h1>Lab Login</h1>
+        <p class="lab-lede">Use a seeded lab account to test authenticated security examples.</p>
 
         @if ($errors->any())
             <p class="error">{{ $errors->first() }}</p>
@@ -34,6 +36,6 @@
             <button type="submit">Log in</button>
         </form>
 
-        <p class="spaced-link"><a href="/labs/idor">Back to the lab page</a></p>
+        <p class="spaced-link"><a href="/">Back to the lab list</a></p>
     </main>
 @endsection

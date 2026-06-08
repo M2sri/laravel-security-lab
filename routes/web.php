@@ -22,9 +22,15 @@ Route::post('/login', function (Request $request) {
     ]);
 
     if (! Auth::guard('customer')->attempt($credentials)) {
-        return back()
-            ->withErrors(['email' => 'The provided credentials do not match the lab customers.'])
-            ->onlyInput('email');
+        if (! Auth::attempt($credentials)) {
+            return back()
+                ->withErrors(['email' => 'The provided credentials do not match the lab accounts.'])
+                ->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+
+        return redirect()->intended('/labs/broken-access-control');
     }
 
     $request->session()->regenerate();
@@ -34,6 +40,7 @@ Route::post('/login', function (Request $request) {
 
 Route::post('/logout', function (Request $request) {
     Auth::guard('customer')->logout();
+    Auth::guard('web')->logout();
 
     $request->session()->invalidate();
     $request->session()->regenerateToken();
@@ -60,6 +67,10 @@ Route::get('/labs/mass-assignment', function () {
 
 Route::get('/labs/file-upload-security', function () {
     return view('labs.file-upload-security');
+});
+
+Route::get('/labs/broken-access-control', function () {
+    return view('labs.broken-access-control');
 });
 
 Route::post('/labs/mass-assignment/vulnerable', function (Request $request) {
@@ -102,6 +113,26 @@ Route::post('/labs/file-upload-security/secure', function (Request $request) {
         'path' => $storedDocumentPath,
         'filename' => basename($storedDocumentPath),
     ], 201);
+});
+
+Route::get('/labs/file-upload-security/secure', function () {
+    return redirect('/labs/file-upload-security');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/labs/broken-access-control/vulnerable/admin-report', function () {
+        return response()->json([
+            'report' => 'Quarterly admin revenue report',
+            'access_pattern' => 'Authenticated, but not authorized by role.',
+        ]);
+    });
+
+    Route::get('/labs/broken-access-control/secure/admin-report', function () {
+        return response()->json([
+            'report' => 'Quarterly admin revenue report',
+            'access_pattern' => 'Authorized admin user.',
+        ]);
+    })->can('view-admin-report');
 });
 
 Route::middleware('auth:customer')->group(function () {

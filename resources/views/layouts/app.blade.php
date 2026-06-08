@@ -366,6 +366,32 @@
             background: var(--surface-muted);
         }
 
+        .login-status {
+            display: grid;
+            gap: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .login-status.no-login {
+            border-left-color: var(--success);
+        }
+
+        .login-status dl {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 8px 14px;
+            margin: 0;
+        }
+
+        .login-status dt {
+            color: var(--muted);
+            font-weight: 800;
+        }
+
+        .login-status dd {
+            margin: 0;
+        }
+
         .form-panel {
             display: grid;
             gap: 16px;

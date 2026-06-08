@@ -7,6 +7,7 @@
     <a href="/labs/idor">IDOR Lab</a>
     <a href="/labs/mass-assignment">Mass Assignment Lab</a>
     <a href="/labs/file-upload-security">File Upload Lab</a>
+    <a href="/labs/broken-access-control">Access Control Lab</a>
     <a href="https://github.com/M2sri/laravel-security-lab">GitHub</a>
 @endsection
 
@@ -44,6 +45,12 @@
                     <h3>Lab 03 &mdash; File Upload Security</h3>
                     <p>Learn how unsafe uploads can expose files and how to store documents safely.</p>
                     <a class="button" href="/labs/file-upload-security">Open Lab</a>
+                </article>
+
+                <article class="card lab-card">
+                    <h3>Lab 04 &mdash; Broken Access Control</h3>
+                    <p>Learn how missing authorization can expose admin-only actions to normal users.</p>
+                    <a class="button" href="/labs/broken-access-control">Open Lab</a>
                 </article>
             </div>
         </section>

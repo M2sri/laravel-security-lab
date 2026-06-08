@@ -72,6 +72,13 @@ class FileUploadSecurityTest extends TestCase
         $response->assertRedirect('/login');
     }
 
+    public function test_secure_upload_get_redirects_to_lab_page(): void
+    {
+        $response = $this->get('/labs/file-upload-security/secure');
+
+        $response->assertRedirect('/labs/file-upload-security');
+    }
+
     private function replacePrivateDiskWithTempDisk(): void
     {
         $filesystem = new Filesystem();

@@ -6,6 +6,16 @@ File upload security is the practice of treating uploaded files as untrusted inp
 
 This lab focuses on defensive Laravel patterns for document uploads.
 
+## Login Required
+
+Use `/login` with this seeded lab customer:
+
+| Customer | Email | Password | Represents |
+| --- | --- | --- | --- |
+| Customer One | `customer1@example.com` | `password` | Authenticated customer allowed to request controlled downloads |
+
+The upload validation endpoint is public for the demo. Login is needed for the controlled download route because private files should be served through application authorization checks.
+
 ## Common mistakes
 
 - Accepting any file type.

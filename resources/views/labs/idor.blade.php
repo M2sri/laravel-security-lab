@@ -27,6 +27,22 @@
                 </p>
             </section>
 
+            <section class="card login-status" aria-labelledby="login-required-title">
+                <h2 id="login-required-title">Login Required</h2>
+                <dl>
+                    <dt>Test email</dt>
+                    <dd><code>customer1@example.com</code> or <code>customer2@example.com</code></dd>
+                    <dt>Test password</dt>
+                    <dd><code>password</code></dd>
+                    <dt>Role/user</dt>
+                    <dd>Lab customer with owned invoices.</dd>
+                </dl>
+                <p>
+                    <a href="/login">Log in at /login</a>. Login is needed because both invoice demo routes use
+                    the customer guard before comparing vulnerable direct lookup with secure owner-scoped lookup.
+                </p>
+            </section>
+
             <section class="card" aria-labelledby="vulnerable-code-title">
                 <span class="badge danger">&#9888; Vulnerable Example</span>
                 <h2 id="vulnerable-code-title">Vulnerable Code Example</h2>

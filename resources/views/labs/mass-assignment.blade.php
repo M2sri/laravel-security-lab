@@ -28,6 +28,11 @@
                 </p>
             </section>
 
+            <section class="card login-status no-login" aria-labelledby="login-status-title">
+                <h2 id="login-status-title">No Login Required</h2>
+                <p>No login required for this lab demo.</p>
+            </section>
+
             <section class="card" aria-labelledby="vulnerable-code-title">
                 <span class="badge danger">&#9888; Vulnerable Example</span>
                 <h2 id="vulnerable-code-title">Vulnerable Code Example</h2>

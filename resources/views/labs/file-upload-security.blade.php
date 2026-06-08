@@ -6,6 +6,7 @@
 @section('navigation')
     <a href="/">Home</a>
     <a href="/labs/mass-assignment">Previous Lab</a>
+    <a href="/labs/broken-access-control">Next Lab</a>
 @endsection
 
 @section('content')
@@ -13,7 +14,7 @@
         <section class="lab-hero" aria-labelledby="file-upload-title">
             <h1 id="file-upload-title">File Upload Security Lab</h1>
             <p class="lab-lede">
-                    File uploads need strict validation, private storage, and authenticated downloads.
+                File uploads need strict validation, private storage, and authenticated downloads.
                 This lab compares a risky public upload with a safer Laravel upload flow.
             </p>
         </section>
@@ -24,6 +25,22 @@
                 <p>
                     Upload endpoints should treat every file as untrusted input. A secure flow validates the file,
                     stores it outside the public web root, and only serves it through application-controlled routes.
+                </p>
+            </section>
+
+            <section class="card login-status" aria-labelledby="login-required-title">
+                <h2 id="login-required-title">Login Required</h2>
+                <dl>
+                    <dt>Test email</dt>
+                    <dd><code>customer1@example.com</code></dd>
+                    <dt>Test password</dt>
+                    <dd><code>password</code></dd>
+                    <dt>Role/user</dt>
+                    <dd>Lab customer allowed to request controlled downloads.</dd>
+                </dl>
+                <p>
+                    <a href="/login">Log in at /login</a>. Upload validation is public for the demo, but the
+                    controlled download route requires login so private files are served through application access checks.
                 </p>
             </section>
 
@@ -126,6 +143,7 @@
             <div class="action-row">
                 <a class="button secondary" href="/">Back to Home</a>
                 <a class="button" href="/labs/mass-assignment">Previous Lab</a>
+                <a class="button" href="/labs/broken-access-control">Next Lab</a>
             </div>
         </div>
     </main>
