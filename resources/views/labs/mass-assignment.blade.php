@@ -6,6 +6,7 @@
 @section('navigation')
     <a href="/">Home</a>
     <a href="/labs/idor">Previous Lab</a>
+    <a href="/labs/file-upload-security">Next Lab</a>
 @endsection
 
 @section('content')
@@ -118,6 +119,7 @@
             <div class="action-row">
                 <a class="button secondary" href="/">Back to Home</a>
                 <a class="button" href="/labs/idor">Previous Lab</a>
+                <a class="button" href="/labs/file-upload-security">Next Lab</a>
             </div>
         </div>
     </main>

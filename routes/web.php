@@ -5,6 +5,7 @@ use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,6 +58,10 @@ Route::get('/labs/mass-assignment', function () {
     return view('labs.mass-assignment');
 });
 
+Route::get('/labs/file-upload-security', function () {
+    return view('labs.file-upload-security');
+});
+
 Route::post('/labs/mass-assignment/vulnerable', function (Request $request) {
     $profile = Profile::create($request->all());
     $profile->refresh();
@@ -86,6 +91,19 @@ Route::post('/labs/mass-assignment/secure', function (Request $request) {
     ], 201);
 });
 
+Route::post('/labs/file-upload-security/secure', function (Request $request) {
+    $request->validate([
+        'document' => ['required', 'file', 'mimes:pdf', 'extensions:pdf', 'max:2048'],
+    ]);
+
+    $storedDocumentPath = $request->file('document')->store('documents', 'private');
+
+    return response()->json([
+        'path' => $storedDocumentPath,
+        'filename' => basename($storedDocumentPath),
+    ], 201);
+});
+
 Route::middleware('auth:customer')->group(function () {
     Route::get('/labs/idor/vulnerable/invoices/{invoice}', function (int $invoice) {
         $invoiceRecord = Invoice::findOrFail($invoice);
@@ -106,5 +124,15 @@ Route::middleware('auth:customer')->group(function () {
             'customer_id' => $invoiceRecord->customer_id,
             'amount' => $invoiceRecord->amount,
         ]);
+    });
+
+    Route::get('/labs/file-upload-security/download', function (Request $request) {
+        $downloadPath = $request->validate([
+            'path' => ['required', 'string', 'starts_with:documents/'],
+        ])['path'];
+
+        abort_unless(Storage::disk('private')->exists($downloadPath), 404);
+
+        return Storage::disk('private')->download($downloadPath);
     });
 });
