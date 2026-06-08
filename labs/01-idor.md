@@ -1,31 +1,19 @@
 # Lab 01: IDOR Protection in Laravel
 
-## What is IDOR?
+## Overview
 
-Insecure Direct Object Reference, or IDOR, happens when an application exposes a direct identifier for a record and does not verify that the current user is allowed to access that record.
+IDOR happens when an application accepts a record ID and does not verify that the logged-in user owns that record.
 
-## Login Required
+## Login required: Yes
 
-Use `/login` with either seeded lab customer:
+Use `/login` with either seeded customer account.
 
-| Customer | Email | Password | Represents |
-| --- | --- | --- | --- |
-| Customer One | `customer1@example.com` | `password` | Customer who owns invoice `IDOR-LAB-001` |
-| Customer Two | `customer2@example.com` | `password` | Customer who owns invoice `IDOR-LAB-002` |
+| User | Email | Password |
+| --- | --- | --- |
+| Customer One | `customer1@example.com` | `password` |
+| Customer Two | `customer2@example.com` | `password` |
 
-Login is needed because the vulnerable and secure invoice routes both require the `customer` guard before they demonstrate the difference between direct lookup and owner-scoped lookup.
-
-For example, a customer might load:
-
-```text
-/labs/idor/secure/invoices/10
-```
-
-If changing `10` to `11` reveals another customer's invoice, the application has an IDOR vulnerability.
-
-## Vulnerable Example
-
-The vulnerable route accepts an invoice ID from the URL and loads it directly:
+## Vulnerable code
 
 ```php
 Route::get('/labs/idor/vulnerable/invoices/{invoice}', function (int $invoice) {
@@ -39,21 +27,11 @@ Route::get('/labs/idor/vulnerable/invoices/{invoice}', function (int $invoice) {
 });
 ```
 
-`Invoice::findOrFail($invoice)` only proves that the invoice exists. It does not prove that the authenticated customer owns it.
-
-## Why It Is Dangerous
-
-An attacker does not need advanced tools to exploit this pattern. If they are logged in as one customer, they can change the ID in the URL and try to access invoices that belong to other customers.
-
-This can expose sensitive billing details, customer identifiers, payment amounts, and any other data stored on the invoice.
-
-## Secure Laravel Fix
-
-Scope the invoice lookup through the authenticated customer:
+## Secure code
 
 ```php
 Route::get('/labs/idor/secure/invoices/{invoice}', function (int $invoice) {
-    $customer = auth('customer')->user();
+    $customer = Auth::guard('customer')->user();
     $invoiceRecord = $customer->invoices()->findOrFail($invoice);
 
     return response()->json([
@@ -64,15 +42,18 @@ Route::get('/labs/idor/secure/invoices/{invoice}', function (int $invoice) {
 });
 ```
 
-This query only searches invoices owned by the authenticated customer. If the invoice exists but belongs to someone else, Laravel returns a 404 response.
+## Key difference
 
-## How to Test It Defensively
+The vulnerable route loads any invoice by ID. The secure route searches only invoices owned by the authenticated customer.
 
-Create two customers and one invoice for each customer.
+## How to test
 
-1. Log in as customer A.
-2. Request customer A's invoice from `/labs/idor/secure/invoices/{invoice}` and confirm the request succeeds.
-3. Still logged in as customer A, request customer B's invoice from the same secure route and confirm the request fails.
-4. Request the secure route while logged out and confirm Laravel redirects to `/login`.
+1. Log in as `customer1@example.com`.
+2. Open Customer One and Customer Two invoice links on `/labs/idor`.
+3. Confirm the vulnerable link can expose another customer's invoice.
+4. Confirm the secure link only returns invoices owned by the logged-in customer.
+5. Log out and confirm secure invoice routes redirect to `/login`.
 
-These tests verify authorization behavior from the customer's perspective instead of testing framework internals.
+## Security lesson
+
+Never trust a user-controlled ID by itself. Scope sensitive records through the authenticated user or an authorization policy.

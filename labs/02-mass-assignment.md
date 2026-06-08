@@ -1,18 +1,14 @@
 # Lab 02: Mass Assignment in Laravel
 
-## Explanation
+## Overview
 
-Mass assignment is the practice of passing an array of input directly into a model create or update operation.
+Mass assignment is risky when request input is passed directly into `create()` or `update()`. A user can submit fields the form never intended to expose.
 
-That can be convenient for normal form fields, but it becomes dangerous when the request contains attributes the user should not control. In this lab, `role` and `is_verified` are sensitive profile fields.
-
-## Login Requirement
+## Login required: No
 
 No login required for this lab demo.
 
-## Vulnerable Code
-
-The vulnerable endpoint trusts every submitted field:
+## Vulnerable code
 
 ```php
 Route::post('/labs/mass-assignment/vulnerable', function (Request $request) {
@@ -28,22 +24,7 @@ Route::post('/labs/mass-assignment/vulnerable', function (Request $request) {
 });
 ```
 
-An attacker-controlled local lab payload can include fields that a normal form would not show:
-
-```json
-{
-  "name": "Demo User",
-  "email": "demo@example.com",
-  "role": "admin",
-  "is_verified": true
-}
-```
-
-Because the route uses `$request->all()`, the submitted `role` and `is_verified` values are stored.
-
-## Secure Code
-
-The secure endpoint validates and stores only the fields this workflow is meant to accept:
+## Secure code
 
 ```php
 Route::post('/labs/mass-assignment/secure', function (Request $request) {
@@ -64,17 +45,17 @@ Route::post('/labs/mass-assignment/secure', function (Request $request) {
 });
 ```
 
-Unexpected fields are ignored because they are not part of the validated data passed to `Profile::create()`.
+## Key difference
 
-## Defensive Testing Approach
+The vulnerable route saves every submitted field. The secure route saves only validated `name` and `email` fields.
 
-Test the behavior from the HTTP boundary:
+## How to test
 
-1. Send a local lab request to the vulnerable endpoint with `role` set to `admin`.
-2. Confirm the vulnerable endpoint stores the submitted role.
-3. Send a local lab request to the vulnerable endpoint with `is_verified` set to `true`.
-4. Confirm the vulnerable endpoint stores the submitted verification flag.
-5. Send the same unexpected fields to the secure endpoint.
-6. Confirm only `name` and `email` are accepted while `role` and `is_verified` keep their default values.
+1. Send `name`, `email`, `role`, and `is_verified` to `/labs/mass-assignment/vulnerable`.
+2. Confirm the vulnerable response stores `role` or `is_verified`.
+3. Send the same payload to `/labs/mass-assignment/secure`.
+4. Confirm the secure response keeps protected fields at their defaults.
 
-These tests are for defensive learning in this repository only. Do not use these examples against real systems.
+## Security lesson
+
+Validate input and pass only intended fields into model writes.
